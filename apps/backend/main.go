@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/allocation"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/asset"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/audit"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/booking"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
@@ -60,6 +61,7 @@ func main() {
 	allocationHandler := allocation.NewAllocationHandler(stores, dbPool)
 	bookingHandler := booking.NewBookingHandler(stores)
 	maintenanceHandler := maintenance.NewMaintenanceHandler(stores)
+	auditHandler := audit.NewAuditHandler(stores)
 
 	schedCtx, schedCancel := context.WithCancel(context.Background())
 	defer schedCancel()
@@ -88,6 +90,13 @@ func main() {
 			v1.GET("/assets/:id", assetHandler.GetHandler)
 			v1.GET("/assets/:id/history", assetHandler.GetHistoryHandler)
 			v1.GET("/categories", categoryHandler.ListHandler)
+
+			// Audit — read endpoints open to all authenticated
+			v1.GET("/audit-cycles", auditHandler.ListCyclesHandler)
+			v1.GET("/audit-cycles/:id", auditHandler.GetCycleHandler)
+			v1.GET("/audit-cycles/:id/items", auditHandler.ListItemsHandler)
+			v1.PATCH("/audit-items/:id", auditHandler.PatchItemHandler)
+			v1.GET("/discrepancy-reports", auditHandler.ListDiscrepancyReportsHandler)
 
 			// Resource Booking — any authenticated employee
 			v1.GET("/resources/:assetId/bookings", bookingHandler.ListByResourceHandler)
@@ -157,6 +166,18 @@ func main() {
 				admin.GET("/employees", employeeHandler.ListHandler)
 				admin.PATCH("/employees/:id", employeeHandler.UpdateHandler)
 				admin.PATCH("/employees/:id/role", employeeHandler.UpdateRoleHandler)
+
+				// Audit — Admin-only
+				admin.POST("/audit-cycles", auditHandler.CreateCycleHandler)
+				admin.POST("/audit-cycles/:id/auditors", auditHandler.AssignAuditorsHandler)
+				admin.PATCH("/audit-cycles/:id/close", auditHandler.CloseCycleHandler)
+			}
+
+			// Discrepancy resolution — Admin or AssetManager
+			discrepancyResolveGroup := v1.Group("")
+			discrepancyResolveGroup.Use(middleware.RequireRole("Admin", "AssetManager"))
+			{
+				discrepancyResolveGroup.PATCH("/discrepancy-reports/:id/resolve", auditHandler.ResolveDiscrepancyHandler)
 			}
 		}
 	}

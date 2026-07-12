@@ -9,6 +9,7 @@ import (
 	activity_log_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/activity-log-repo"
 	allocation_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/allocation-repo"
 	asset_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/asset-repo"
+	audit_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/audit-repo"
 	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
 	booking_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/booking-repo"
 	category_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/category-repo"
@@ -32,6 +33,7 @@ func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 		Notification: notification_repo.NewNotificationRepository(pool),
 		Booking:      booking_repo.NewBookingRepository(pool),
 		Maintenance:  maintenance_repo.NewMaintenanceRepository(pool),
+		Audit:        audit_repo.NewAuditRepository(pool),
 	}
 }
 
@@ -47,6 +49,7 @@ type StorageRegistry struct {
 	Notification NotificationStorage
 	Booking      BookingStorage
 	Maintenance  MaintenanceStorage
+	Audit        AuditStorage
 }
 
 type AuthStorage interface {
@@ -140,4 +143,18 @@ type MaintenanceStorage interface {
 	UpdateAssetStatus(ctx context.Context, assetID, toStatus string, changedByID *string, reason string) error
 	GetCurrentAssetStatus(ctx context.Context, assetID string) (string, error)
 	ListByAsset(ctx context.Context, assetID string) ([]models.MaintenanceDetail, error)
+}
+
+type AuditStorage interface {
+	CreateCycle(ctx context.Context, cycle models.AuditCycle, scopeDeptID, scopeLoc *string) (*models.AuditCycle, error)
+	GetCycleByID(ctx context.Context, id string) (*models.AuditCycleDetail, error)
+	ListCycles(ctx context.Context) ([]models.AuditCycleDetail, error)
+	AssignAuditors(ctx context.Context, cycleID string, employeeIDs []string) error
+	GetAssignedAuditorIDs(ctx context.Context, cycleID string) ([]string, error)
+	ListItems(ctx context.Context, cycleID string, filterAuditorID *string) ([]models.AuditItemDetail, error)
+	GetItemByID(ctx context.Context, id string) (*models.AuditItem, error)
+	VerifyItem(ctx context.Context, itemID, auditorID string, result, notes *string) error
+	CloseCycle(ctx context.Context, cycleID, closedBy string) error
+	ListDiscrepancyReports(ctx context.Context, cycleID *string, resolved *bool) ([]models.DiscrepancyReportDetail, error)
+	ResolveDiscrepancy(ctx context.Context, id, resolvedBy string) error
 }
