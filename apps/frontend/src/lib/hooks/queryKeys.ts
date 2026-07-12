@@ -50,6 +50,13 @@ export const queryKeys = {
     all: ['activity-logs'] as const,
     list: (params?: Record<string, unknown>) => ['activity-logs', 'list', params] as const,
   },
+  reports: {
+    utilization: (filters?: Record<string, unknown>) => ['reports', 'utilization', filters] as const,
+    maintenance: (filters?: Record<string, unknown>) => ['reports', 'maintenance', filters] as const,
+    retirement: (filters?: Record<string, unknown>) => ['reports', 'retirement', filters] as const,
+    allocationSummary: ['reports', 'allocation-summary'] as const,
+    bookingHeatmap: (filters?: Record<string, unknown>) => ['reports', 'booking-heatmap', filters] as const,
+  },
   dashboard: {
     kpis: ['dashboard', 'kpis'] as const,
     overdue: ['dashboard', 'overdue'] as const,
