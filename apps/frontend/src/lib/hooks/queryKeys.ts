@@ -28,4 +28,11 @@ export const queryKeys = {
     all: ['transfers'] as const,
     pending: ['transfers', 'pending'] as const,
   },
+  bookings: {
+    all: ['bookings'] as const,
+    my: ['bookings', 'my'] as const,
+    byResource: (assetId: string, from?: string, to?: string) =>
+      ['bookings', 'resource', assetId, from, to] as const,
+    detail: (id: string) => ['bookings', id] as const,
+  },
 };

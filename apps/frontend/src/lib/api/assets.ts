@@ -69,6 +69,7 @@ export interface ListAssetsParams {
   status?: string;
   department?: string;
   location?: string;
+  is_bookable?: string;
   page?: number;
   page_size?: number;
 }
