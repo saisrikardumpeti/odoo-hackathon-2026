@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { useAuthStore } from '#/lib/stores/authStore';
 import { useAssets } from '#/lib/hooks/useAssets';
@@ -30,11 +30,17 @@ function ResourceBookingPage() {
   const [conflictOpen, setConflictOpen] = useState(false);
   const [conflictBookings, setConflictBookings] = useState<BookingDetail[]>([]);
 
-  const today = new Date();
-  const weekStart = new Date(today);
-  weekStart.setDate(weekStart.getDate() + weekOffset * 7);
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 7);
+  const weekStart = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + weekOffset * 7);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, [weekOffset]);
+  const weekEnd = useMemo(() => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + 7);
+    return d;
+  }, [weekStart]);
 
   const { data: assetsData } = useAssets({ is_bookable: 'true', page_size: 100 });
   const { data: bookingsData } = useResourceBookings(

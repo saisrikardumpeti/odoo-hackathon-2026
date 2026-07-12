@@ -3,7 +3,6 @@ import { useNavigate } from '@tanstack/react-router';
 import { useCreateMaintenance } from '#/lib/hooks/useMaintenance';
 import { useAssets } from '#/lib/hooks/useAssets';
 import { Button } from '#/components/ui/button';
-import { Input } from '#/components/ui/input';
 import { Textarea } from '#/components/ui/textarea';
 import {
   Select,
@@ -46,7 +45,7 @@ function RaiseMaintenanceForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-lg">
+    <form onSubmit={handleSubmit} className="space-y-6 w-full">
       <div className="space-y-2">
         <label className="text-sm font-medium">Asset</label>
         <Select value={assetId} onValueChange={setAssetId}>

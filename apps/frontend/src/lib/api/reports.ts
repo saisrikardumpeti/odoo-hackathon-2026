@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { client } from './client';
 
 export interface UtilizationItem {
   asset_id: string;
@@ -76,36 +76,48 @@ export interface ReportFilters {
 }
 
 export const fetchUtilizationReport = async (filters?: ReportFilters): Promise<UtilizationResponse> => {
-  const { data } = await axios.get('/api/v1/reports/utilization', { params: filters });
+  const { data } = await client.get('/v1/reports/utilization', { params: filters });
   return data;
 };
 
 export const fetchMaintenanceFrequency = async (filters?: ReportFilters): Promise<MaintenanceFrequencyResponse> => {
-  const { data } = await axios.get('/api/v1/reports/maintenance-frequency', { params: filters });
+  const { data } = await client.get('/v1/reports/maintenance-frequency', { params: filters });
   return data;
 };
 
 export const fetchRetirementWatchlist = async (filters?: ReportFilters): Promise<RetirementWatchlistResponse> => {
-  const { data } = await axios.get('/api/v1/reports/retirement-watchlist', { params: filters });
+  const { data } = await client.get('/v1/reports/retirement-watchlist', { params: filters });
   return data;
 };
 
 export const fetchAllocationSummary = async (): Promise<AllocationSummaryResponse> => {
-  const { data } = await axios.get('/api/v1/reports/allocation-summary');
+  const { data } = await client.get('/v1/reports/allocation-summary');
   return data;
 };
 
 export const fetchBookingHeatmap = async (filters?: ReportFilters): Promise<BookingHeatmapResponse> => {
-  const { data } = await axios.get('/api/v1/reports/booking-heatmap', { params: filters });
+  const { data } = await client.get('/v1/reports/booking-heatmap', { params: filters });
   return data;
 };
 
-export const getExportUrl = (reportType: string, filters?: ReportFilters): string => {
-  const params = new URLSearchParams();
-  params.set('type', reportType);
-  if (filters?.from) params.set('from', filters.from);
-  if (filters?.to) params.set('to', filters.to);
-  if (filters?.idle_days) params.set('idle_days', String(filters.idle_days));
-  if (filters?.age_years) params.set('age_years', String(filters.age_years));
-  return `/api/v1/reports/export?${params.toString()}`;
+export const downloadReportCSV = async (reportType: string, filters?: ReportFilters): Promise<void> => {
+  const params: Record<string, string> = { type: reportType };
+  if (filters?.from) params.from = filters.from;
+  if (filters?.to) params.to = filters.to;
+  if (filters?.idle_days) params.idle_days = String(filters.idle_days);
+  if (filters?.age_years) params.age_years = String(filters.age_years);
+
+  const { data } = await client.get('/v1/reports/export', {
+    params,
+    responseType: 'blob',
+  });
+
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${reportType}-report.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
 };

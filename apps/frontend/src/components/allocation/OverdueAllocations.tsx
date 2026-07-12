@@ -55,7 +55,6 @@ function OverdueAllocations({ compact = false }: { compact?: boolean }) {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-4xl">
       <Table>
         <TableHeader>
           <TableRow>
@@ -81,7 +80,6 @@ function OverdueAllocations({ compact = false }: { compact?: boolean }) {
           ))}
         </TableBody>
       </Table>
-      </div>
     </div>
   );
 }

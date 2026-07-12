@@ -14,5 +14,6 @@ type ActivityLog struct {
 
 type ActivityLogDetail struct {
 	ActivityLog
-	ActorName *string `json:"actor_name"`
+	ActorName  *string `json:"actor_name"`
+	EntityName *string `json:"entity_name"`
 }

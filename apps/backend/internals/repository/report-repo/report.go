@@ -49,7 +49,7 @@ func (r *ReportRepository) GetUtilization(ctx context.Context, from, to *time.Ti
 			ORDER BY created_at DESC
 			LIMIT 1
 		) book_last ON true
-		ORDER BY total_activity DESC
+		ORDER BY COALESCE(alloc_counts.cnt, 0) + COALESCE(book_counts.cnt, 0) DESC
 	`
 
 	rows, err := r.pool.Query(ctx, query, from, to)
@@ -154,7 +154,7 @@ func (r *ReportRepository) GetRetirementWatchlist(ctx context.Context, ageYearsT
 	query := `
 		SELECT a.id, a.asset_tag, a.name, COALESCE(ac.name, 'Uncategorized'),
 		       a.acquisition_date::text,
-		       EXTRACT(YEAR FROM age(CURRENT_DATE, a.acquisition_date))::float8,
+		       EXTRACT(YEAR FROM age(CURRENT_DATE, a.acquisition_date))::float8 AS age_years,
 		       a.status::text
 		FROM assets a
 		LEFT JOIN asset_categories ac ON ac.id = a.category_id

@@ -114,6 +114,9 @@ func (r *ActivityLogRepository) List(ctx context.Context, filters ActivityLogFil
 		if log.Metadata == nil {
 			log.Metadata = map[string]interface{}{}
 		}
+		if name := extractEntityName(log.EntityType, log.Metadata); name != "" {
+			log.EntityName = &name
+		}
 		logs = append(logs, log)
 	}
 	if logs == nil {
@@ -124,4 +127,41 @@ func (r *ActivityLogRepository) List(ctx context.Context, filters ActivityLogFil
 		Logs:  logs,
 		Total: total,
 	}, nil
+}
+
+func extractEntityName(entityType string, meta map[string]interface{}) string {
+	switch entityType {
+	case "asset":
+		if tag, ok := meta["asset_tag"].(string); ok && tag != "" {
+			return tag
+		}
+		if name, ok := meta["asset_name"].(string); ok && name != "" {
+			return name
+		}
+	case "booking":
+		if tag, ok := meta["asset_tag"].(string); ok && tag != "" {
+			return tag
+		}
+	case "allocation":
+		if tag, ok := meta["asset_tag"].(string); ok && tag != "" {
+			return tag
+		}
+	case "maintenance":
+		if tag, ok := meta["asset_tag"].(string); ok && tag != "" {
+			return tag
+		}
+	case "employee":
+		if name, ok := meta["employee_name"].(string); ok && name != "" {
+			return name
+		}
+	case "department":
+		if name, ok := meta["department_name"].(string); ok && name != "" {
+			return name
+		}
+	case "audit_cycle":
+		if name, ok := meta["cycle_name"].(string); ok && name != "" {
+			return name
+		}
+	}
+	return ""
 }

@@ -17,8 +17,8 @@ import { Input } from '#/components/ui/input';
 import { Label } from '#/components/ui/label';
 import { Button } from '#/components/ui/button';
 import { Skeleton } from '#/components/ui/skeleton';
-import { Download } from 'lucide-react';
-import { getExportUrl } from '#/lib/api/reports';
+import { Download, Loader2 } from 'lucide-react';
+import { downloadReportCSV } from '#/lib/api/reports';
 import type { ReportFilters } from '#/lib/api/reports';
 
 export const Route = createFileRoute('/reports')({
@@ -41,6 +41,7 @@ function ReportsPage() {
   const [activeTab, setActiveTab] = useState('utilization');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [exporting, setExporting] = useState(false);
 
   const filters: ReportFilters = {};
   if (fromDate) filters.from = new Date(fromDate).toISOString();
@@ -48,9 +49,13 @@ function ReportsPage() {
 
   const currentReport = REPORT_TYPES.find((r) => r.value === activeTab);
 
-  const handleExport = () => {
-    const url = getExportUrl(currentReport?.exportType ?? 'utilization', filters);
-    window.open(url, '_blank');
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      await downloadReportCSV(currentReport?.exportType ?? 'utilization', filters);
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -71,8 +76,8 @@ function ReportsPage() {
           <Label htmlFor="to">To</Label>
           <Input id="to" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-44" />
         </div>
-        <Button variant="outline" size="sm" onClick={handleExport} disabled={!currentReport}>
-          <Download className="size-4 mr-1" />
+        <Button variant="outline" size="sm" onClick={handleExport} disabled={!currentReport || exporting}>
+          {exporting ? <Loader2 className="size-4 mr-1 animate-spin" /> : <Download className="size-4 mr-1" />}
           Export CSV
         </Button>
       </div>

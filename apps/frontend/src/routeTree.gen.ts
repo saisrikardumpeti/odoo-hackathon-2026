@@ -10,13 +10,16 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResourceBookingRouteImport } from './routes/resource-booking'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as OrganizationSetupRouteImport } from './routes/organization-setup'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NotificationsIndexRouteImport } from './routes/notifications/index'
 import { Route as MaintenanceIndexRouteImport } from './routes/maintenance/index'
 import { Route as AuditIndexRouteImport } from './routes/audit/index'
 import { Route as AssetsIndexRouteImport } from './routes/assets/index'
 import { Route as AllocationTransferIndexRouteImport } from './routes/allocation-transfer/index'
+import { Route as ActivityLogsIndexRouteImport } from './routes/activity-logs/index'
 import { Route as MaintenanceNewRouteImport } from './routes/maintenance/new'
 import { Route as MaintenanceApprovalsRouteImport } from './routes/maintenance/approvals'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
@@ -33,6 +36,11 @@ const ResourceBookingRoute = ResourceBookingRouteImport.update({
   path: '/resource-booking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrganizationSetupRoute = OrganizationSetupRouteImport.update({
   id: '/organization-setup',
   path: '/organization-setup',
@@ -46,6 +54,11 @@ const MyBookingsRoute = MyBookingsRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
+  id: '/notifications/',
+  path: '/notifications/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaintenanceIndexRoute = MaintenanceIndexRouteImport.update({
@@ -66,6 +79,11 @@ const AssetsIndexRoute = AssetsIndexRouteImport.update({
 const AllocationTransferIndexRoute = AllocationTransferIndexRouteImport.update({
   id: '/allocation-transfer/',
   path: '/allocation-transfer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivityLogsIndexRoute = ActivityLogsIndexRouteImport.update({
+  id: '/activity-logs/',
+  path: '/activity-logs/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaintenanceNewRoute = MaintenanceNewRouteImport.update({
@@ -124,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/my-bookings': typeof MyBookingsRoute
   '/organization-setup': typeof OrganizationSetupRoute
+  '/reports': typeof ReportsRoute
   '/resource-booking': typeof ResourceBookingRoute
   '/allocation-transfer/overdue': typeof AllocationTransferOverdueRoute
   '/assets/$id': typeof AssetsIdRoute
@@ -134,16 +153,19 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/maintenance/approvals': typeof MaintenanceApprovalsRoute
   '/maintenance/new': typeof MaintenanceNewRoute
+  '/activity-logs/': typeof ActivityLogsIndexRoute
   '/allocation-transfer/': typeof AllocationTransferIndexRoute
   '/assets/': typeof AssetsIndexRoute
   '/audit/': typeof AuditIndexRoute
   '/maintenance/': typeof MaintenanceIndexRoute
+  '/notifications/': typeof NotificationsIndexRoute
   '/audit/cycle/$id': typeof AuditCycleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/my-bookings': typeof MyBookingsRoute
   '/organization-setup': typeof OrganizationSetupRoute
+  '/reports': typeof ReportsRoute
   '/resource-booking': typeof ResourceBookingRoute
   '/allocation-transfer/overdue': typeof AllocationTransferOverdueRoute
   '/assets/$id': typeof AssetsIdRoute
@@ -154,10 +176,12 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/maintenance/approvals': typeof MaintenanceApprovalsRoute
   '/maintenance/new': typeof MaintenanceNewRoute
+  '/activity-logs': typeof ActivityLogsIndexRoute
   '/allocation-transfer': typeof AllocationTransferIndexRoute
   '/assets': typeof AssetsIndexRoute
   '/audit': typeof AuditIndexRoute
   '/maintenance': typeof MaintenanceIndexRoute
+  '/notifications': typeof NotificationsIndexRoute
   '/audit/cycle/$id': typeof AuditCycleIdRoute
 }
 export interface FileRoutesById {
@@ -165,6 +189,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/my-bookings': typeof MyBookingsRoute
   '/organization-setup': typeof OrganizationSetupRoute
+  '/reports': typeof ReportsRoute
   '/resource-booking': typeof ResourceBookingRoute
   '/allocation-transfer/overdue': typeof AllocationTransferOverdueRoute
   '/assets/$id': typeof AssetsIdRoute
@@ -175,10 +200,12 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/maintenance/approvals': typeof MaintenanceApprovalsRoute
   '/maintenance/new': typeof MaintenanceNewRoute
+  '/activity-logs/': typeof ActivityLogsIndexRoute
   '/allocation-transfer/': typeof AllocationTransferIndexRoute
   '/assets/': typeof AssetsIndexRoute
   '/audit/': typeof AuditIndexRoute
   '/maintenance/': typeof MaintenanceIndexRoute
+  '/notifications/': typeof NotificationsIndexRoute
   '/audit/cycle/$id': typeof AuditCycleIdRoute
 }
 export interface FileRouteTypes {
@@ -187,6 +214,7 @@ export interface FileRouteTypes {
     | '/'
     | '/my-bookings'
     | '/organization-setup'
+    | '/reports'
     | '/resource-booking'
     | '/allocation-transfer/overdue'
     | '/assets/$id'
@@ -197,16 +225,19 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/maintenance/approvals'
     | '/maintenance/new'
+    | '/activity-logs/'
     | '/allocation-transfer/'
     | '/assets/'
     | '/audit/'
     | '/maintenance/'
+    | '/notifications/'
     | '/audit/cycle/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/my-bookings'
     | '/organization-setup'
+    | '/reports'
     | '/resource-booking'
     | '/allocation-transfer/overdue'
     | '/assets/$id'
@@ -217,16 +248,19 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/maintenance/approvals'
     | '/maintenance/new'
+    | '/activity-logs'
     | '/allocation-transfer'
     | '/assets'
     | '/audit'
     | '/maintenance'
+    | '/notifications'
     | '/audit/cycle/$id'
   id:
     | '__root__'
     | '/'
     | '/my-bookings'
     | '/organization-setup'
+    | '/reports'
     | '/resource-booking'
     | '/allocation-transfer/overdue'
     | '/assets/$id'
@@ -237,10 +271,12 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/maintenance/approvals'
     | '/maintenance/new'
+    | '/activity-logs/'
     | '/allocation-transfer/'
     | '/assets/'
     | '/audit/'
     | '/maintenance/'
+    | '/notifications/'
     | '/audit/cycle/$id'
   fileRoutesById: FileRoutesById
 }
@@ -248,6 +284,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MyBookingsRoute: typeof MyBookingsRoute
   OrganizationSetupRoute: typeof OrganizationSetupRoute
+  ReportsRoute: typeof ReportsRoute
   ResourceBookingRoute: typeof ResourceBookingRoute
   AllocationTransferOverdueRoute: typeof AllocationTransferOverdueRoute
   AssetsIdRoute: typeof AssetsIdRoute
@@ -258,10 +295,12 @@ export interface RootRouteChildren {
   AuthSignupRoute: typeof AuthSignupRoute
   MaintenanceApprovalsRoute: typeof MaintenanceApprovalsRoute
   MaintenanceNewRoute: typeof MaintenanceNewRoute
+  ActivityLogsIndexRoute: typeof ActivityLogsIndexRoute
   AllocationTransferIndexRoute: typeof AllocationTransferIndexRoute
   AssetsIndexRoute: typeof AssetsIndexRoute
   AuditIndexRoute: typeof AuditIndexRoute
   MaintenanceIndexRoute: typeof MaintenanceIndexRoute
+  NotificationsIndexRoute: typeof NotificationsIndexRoute
   AuditCycleIdRoute: typeof AuditCycleIdRoute
 }
 
@@ -272,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/resource-booking'
       fullPath: '/resource-booking'
       preLoaderRoute: typeof ResourceBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/organization-setup': {
@@ -293,6 +339,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications/': {
+      id: '/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications/'
+      preLoaderRoute: typeof NotificationsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maintenance/': {
@@ -321,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/allocation-transfer'
       fullPath: '/allocation-transfer/'
       preLoaderRoute: typeof AllocationTransferIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activity-logs/': {
+      id: '/activity-logs/'
+      path: '/activity-logs'
+      fullPath: '/activity-logs/'
+      preLoaderRoute: typeof ActivityLogsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maintenance/new': {
@@ -400,6 +460,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MyBookingsRoute: MyBookingsRoute,
   OrganizationSetupRoute: OrganizationSetupRoute,
+  ReportsRoute: ReportsRoute,
   ResourceBookingRoute: ResourceBookingRoute,
   AllocationTransferOverdueRoute: AllocationTransferOverdueRoute,
   AssetsIdRoute: AssetsIdRoute,
@@ -410,10 +471,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignupRoute: AuthSignupRoute,
   MaintenanceApprovalsRoute: MaintenanceApprovalsRoute,
   MaintenanceNewRoute: MaintenanceNewRoute,
+  ActivityLogsIndexRoute: ActivityLogsIndexRoute,
   AllocationTransferIndexRoute: AllocationTransferIndexRoute,
   AssetsIndexRoute: AssetsIndexRoute,
   AuditIndexRoute: AuditIndexRoute,
   MaintenanceIndexRoute: MaintenanceIndexRoute,
+  NotificationsIndexRoute: NotificationsIndexRoute,
   AuditCycleIdRoute: AuditCycleIdRoute,
 }
 export const routeTree = rootRouteImport

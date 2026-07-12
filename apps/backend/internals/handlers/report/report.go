@@ -3,6 +3,7 @@ package report
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -45,6 +46,7 @@ func (h *ReportHandler) GetUtilizationHandler(c *gin.Context) {
 
 	items, err := h.store.Report.GetUtilization(c.Request.Context(), from, to, idleDays)
 	if err != nil {
+		log.Printf("ERROR: utilization report: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch utilization report"})
 		return
 	}
@@ -75,6 +77,7 @@ func (h *ReportHandler) GetRetirementWatchlistHandler(c *gin.Context) {
 
 	items, err := h.store.Report.GetRetirementWatchlist(c.Request.Context(), threshold)
 	if err != nil {
+		log.Printf("ERROR: retirement watchlist report: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch retirement watchlist"})
 		return
 	}

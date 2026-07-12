@@ -2,6 +2,7 @@ package audit_repo
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -28,7 +29,7 @@ func (r *AuditRepository) CreateCycle(ctx context.Context, cycle models.AuditCyc
 	err = tx.QueryRow(ctx,
 		`INSERT INTO audit_cycles (name, scope_department_id, scope_location, start_date, end_date, status, created_by)
 		 VALUES ($1, $2, $3, $4, $5, 'Draft', $6)
-		 RETURNING id, name, scope_department_id, scope_location, start_date, end_date, status, created_by, closed_at, created_at, updated_at`,
+		 RETURNING id, name, scope_department_id, scope_location, start_date::text, end_date::text, status, created_by, closed_at, created_at, updated_at`,
 		cycle.Name, cycle.ScopeDepartmentID, cycle.ScopeLocation, cycle.StartDate, cycle.EndDate, cycle.CreatedBy,
 	).Scan(
 		&created.ID, &created.Name, &created.ScopeDepartmentID, &created.ScopeLocation,
@@ -41,7 +42,7 @@ func (r *AuditRepository) CreateCycle(ctx context.Context, cycle models.AuditCyc
 
 	whereClauses := []string{}
 	args := []interface{}{}
-	argIdx := 1
+	argIdx := 2
 
 	if scopeDeptID != nil && *scopeDeptID != "" {
 		whereClauses = append(whereClauses, fmt.Sprintf("a.current_holder_department_id = $%d", argIdx))
@@ -82,7 +83,7 @@ func (r *AuditRepository) GetCycleByID(ctx context.Context, id string) (*models.
 	var detail models.AuditCycleDetail
 	err := r.pool.QueryRow(ctx,
 		`SELECT ac.id, ac.name, ac.scope_department_id, ac.scope_location,
-		        ac.start_date, ac.end_date, ac.status, ac.created_by, ac.closed_at,
+		        ac.start_date::text, ac.end_date::text, ac.status, ac.created_by, ac.closed_at,
 		        ac.created_at, ac.updated_at,
 		        d.name AS scope_department_name,
 		        e.name AS created_by_name
@@ -144,7 +145,7 @@ func (r *AuditRepository) GetCycleByID(ctx context.Context, id string) (*models.
 func (r *AuditRepository) ListCycles(ctx context.Context) ([]models.AuditCycleDetail, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT ac.id, ac.name, ac.scope_department_id, ac.scope_location,
-		        ac.start_date, ac.end_date, ac.status, ac.created_by, ac.closed_at,
+		        ac.start_date::text, ac.end_date::text, ac.status, ac.created_by, ac.closed_at,
 		        ac.created_at, ac.updated_at,
 		        d.name AS scope_department_name,
 		        e.name AS created_by_name
@@ -287,11 +288,14 @@ func (r *AuditRepository) CloseCycle(ctx context.Context, cycleID, closedBy stri
 		}
 	}
 
+	metadataJSON, _ := json.Marshal(map[string]interface{}{
+		"missing_asset_count": len(missingAssetIDs),
+		"closed_by":           closedBy,
+	})
 	_, err = tx.Exec(ctx,
 		`INSERT INTO activity_logs (actor_employee_id, action, entity_type, entity_id, metadata)
-		 VALUES ($1, 'audit.close', 'audit_cycle', $2,
-		         jsonb_build_object('missing_asset_count', $3, 'closed_by', $1))`,
-		closedBy, cycleID, len(missingAssetIDs),
+		 VALUES ($1, 'audit.close', 'audit_cycle', $2, $3)`,
+		closedBy, cycleID, metadataJSON,
 	)
 	if err != nil {
 		return err

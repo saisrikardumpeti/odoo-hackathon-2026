@@ -118,7 +118,9 @@ function ActivityLogsPage() {
                 <span className="text-xs text-muted-foreground">
                   {new Date(log.created_at).toLocaleString()}
                 </span>
-                <span>{log.actor_name ?? log.actor_employee_id ?? 'System'}</span>
+                <span title={log.actor_employee_id ?? undefined}>
+                  {log.actor_name ?? (log.actor_employee_id ? 'Unknown' : 'System')}
+                </span>
                 <span className="font-mono text-xs">{log.action}</span>
                 <span className="text-xs">
                   {log.entity_type}{log.entity_id ? ` / ${log.entity_id.slice(0, 8)}...` : ''}

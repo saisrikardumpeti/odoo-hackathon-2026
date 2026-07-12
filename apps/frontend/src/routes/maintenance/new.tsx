@@ -5,12 +5,14 @@ export const Route = createFileRoute('/maintenance/new')({ component: NewMainten
 
 function NewMaintenancePage() {
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Raise Maintenance Request</h1>
-        <p className="text-sm text-muted-foreground">Submit a new maintenance request for an asset</p>
+    <div className="min-h-full flex items-center justify-center p-8">
+      <div className="w-full max-w-2xl space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold">Raise Maintenance Request</h1>
+          <p className="text-muted-foreground mt-1">Submit a new maintenance request for an asset</p>
+        </div>
+        <RaiseMaintenanceForm />
       </div>
-      <RaiseMaintenanceForm />
     </div>
   );
 }

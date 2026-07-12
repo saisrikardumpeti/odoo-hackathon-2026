@@ -2,6 +2,7 @@ package audit
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,15 +38,18 @@ func (h *AuditHandler) CreateCycleHandler(c *gin.Context) {
 	empIDStr, _ := employeeID.(string)
 
 	cycle := models.AuditCycle{
-		Name:      req.Name,
-		StartDate: req.StartDate,
-		EndDate:   req.EndDate,
-		CreatedBy: empIDStr,
+		Name:               req.Name,
+		ScopeDepartmentID:  req.ScopeDepartmentID,
+		ScopeLocation:      req.ScopeLocation,
+		StartDate:          req.StartDate,
+		EndDate:            req.EndDate,
+		CreatedBy:          empIDStr,
 	}
 
 	created, err := h.store.Audit.CreateCycle(c.Request.Context(), cycle, req.ScopeDepartmentID, req.ScopeLocation)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create audit cycle"})
+		log.Printf("CreateCycle error: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create audit cycle", "detail": err.Error()})
 		return
 	}
 

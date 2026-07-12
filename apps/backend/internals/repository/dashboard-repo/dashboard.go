@@ -63,7 +63,7 @@ func (r *DashboardRepository) GetKPIs(ctx context.Context, employeeID *string, r
 
 func (r *DashboardRepository) GetOverdue(ctx context.Context, employeeID *string, role string) ([]models.OverdueItem, error) {
 	query := `SELECT al.id, al.asset_id, a.asset_tag, a.name, al.employee_id, e.name, al.expected_return_date::text,
-	             EXTRACT(DAY FROM (CURRENT_DATE - al.expected_return_date))::int
+	             (CURRENT_DATE - al.expected_return_date)::int
 	      FROM allocations al
 	      JOIN assets a ON a.id = al.asset_id
 	      LEFT JOIN employees e ON e.id = al.employee_id
@@ -103,13 +103,13 @@ func (r *DashboardRepository) GetOverdue(ctx context.Context, employeeID *string
 
 func (r *DashboardRepository) GetUpcoming(ctx context.Context, employeeID *string, role string, windowDays int) ([]models.UpcomingItem, error) {
 	query := `SELECT al.id, al.asset_id, a.asset_tag, a.name, al.employee_id, e.name, al.expected_return_date::text,
-	             EXTRACT(DAY FROM (al.expected_return_date - CURRENT_DATE))::int
+	             (al.expected_return_date - CURRENT_DATE)::int
 	      FROM allocations al
 	      JOIN assets a ON a.id = al.asset_id
 	      LEFT JOIN employees e ON e.id = al.employee_id
 	      WHERE al.status = 'Active' AND al.expected_return_date IS NOT NULL
 	        AND al.expected_return_date >= CURRENT_DATE
-	        AND al.expected_return_date <= CURRENT_DATE + $1::int * INTERVAL '1 day'`
+	        AND al.expected_return_date <= CURRENT_DATE + $1 * INTERVAL '1 day'`
 
 	var args []interface{}
 	args = append(args, windowDays)

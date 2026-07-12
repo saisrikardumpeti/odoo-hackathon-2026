@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { client } from './client';
 
 export interface KPIs {
   assets_available: number;
@@ -58,22 +58,22 @@ export interface RecentActivityResponse {
 }
 
 export const fetchKPIs = async (): Promise<KPIsResponse> => {
-  const { data } = await axios.get('/api/v1/dashboard/kpis');
+  const { data } = await client.get('/v1/dashboard/kpis');
   return data;
 };
 
 export const fetchOverdue = async (): Promise<OverdueResponse> => {
-  const { data } = await axios.get('/api/v1/dashboard/overdue');
+  const { data } = await client.get('/v1/dashboard/overdue');
   return data;
 };
 
 export const fetchRecentActivity = async (): Promise<RecentActivityResponse> => {
-  const { data } = await axios.get('/api/v1/dashboard/activity');
+  const { data } = await client.get('/v1/dashboard/activity');
   return data;
 };
 
 export const fetchUpcoming = async (windowDays?: number): Promise<UpcomingResponse> => {
   const params = windowDays ? { window_days: windowDays } : {};
-  const { data } = await axios.get('/api/v1/dashboard/upcoming', { params });
+  const { data } = await client.get('/v1/dashboard/upcoming', { params });
   return data;
 };
