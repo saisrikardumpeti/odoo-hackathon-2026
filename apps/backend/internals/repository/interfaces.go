@@ -13,6 +13,7 @@ import (
 	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
 	booking_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/booking-repo"
 	category_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/category-repo"
+	dashboard_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/dashboard-repo"
 	department_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/department-repo"
 	employee_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/employee-repo"
 	maintenance_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/maintenance-repo"
@@ -34,6 +35,7 @@ func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 		Booking:      booking_repo.NewBookingRepository(pool),
 		Maintenance:  maintenance_repo.NewMaintenanceRepository(pool),
 		Audit:        audit_repo.NewAuditRepository(pool),
+		Dashboard:    dashboard_repo.NewDashboardRepository(pool),
 	}
 }
 
@@ -50,6 +52,7 @@ type StorageRegistry struct {
 	Booking      BookingStorage
 	Maintenance  MaintenanceStorage
 	Audit        AuditStorage
+	Dashboard    DashboardStorage
 }
 
 type AuthStorage interface {
@@ -161,4 +164,11 @@ type AuditStorage interface {
 	CloseCycle(ctx context.Context, cycleID, closedBy string) error
 	ListDiscrepancyReports(ctx context.Context, cycleID *string, resolved *bool) ([]models.DiscrepancyReportDetail, error)
 	ResolveDiscrepancy(ctx context.Context, id, resolvedBy string) error
+}
+
+type DashboardStorage interface {
+	GetKPIs(ctx context.Context, employeeID *string, role string) (*models.KPIsResponse, error)
+	GetOverdue(ctx context.Context, employeeID *string, role string) ([]models.OverdueItem, error)
+	GetUpcoming(ctx context.Context, employeeID *string, role string, windowDays int) ([]models.UpcomingItem, error)
+	GetRecentActivity(ctx context.Context, employeeID *string, role string, limit int) ([]models.RecentActivityItem, error)
 }

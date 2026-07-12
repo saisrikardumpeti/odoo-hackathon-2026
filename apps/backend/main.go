@@ -14,6 +14,7 @@ import (
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/booking"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/dashboard"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/department"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/employee"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/maintenance"
@@ -65,6 +66,7 @@ func main() {
 	maintenanceHandler := maintenance.NewMaintenanceHandler(stores)
 	auditHandler := audit.NewAuditHandler(stores)
 	notificationHandler := notification.NewNotificationHandler(stores)
+	dashboardHandler := dashboard.NewDashboardHandler(stores)
 	activityLogHandler := activitylog.NewActivityLogHandler(stores)
 
 	schedCtx, schedCancel := context.WithCancel(context.Background())
@@ -94,6 +96,12 @@ func main() {
 			v1.GET("/assets/:id", assetHandler.GetHandler)
 			v1.GET("/assets/:id/history", assetHandler.GetHistoryHandler)
 			v1.GET("/categories", categoryHandler.ListHandler)
+
+			// Dashboard — any authenticated employee
+			v1.GET("/dashboard/kpis", dashboardHandler.GetKPIsHandler)
+			v1.GET("/dashboard/overdue", dashboardHandler.GetOverdueHandler)
+			v1.GET("/dashboard/upcoming", dashboardHandler.GetUpcomingHandler)
+			v1.GET("/dashboard/activity", dashboardHandler.GetRecentActivityHandler)
 
 			// Audit — read endpoints open to all authenticated
 			v1.GET("/audit-cycles", auditHandler.ListCyclesHandler)
