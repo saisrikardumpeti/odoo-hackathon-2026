@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { RaiseMaintenanceForm } from '#/components/maintenance/RaiseMaintenanceForm';
 
-export const Route = createFileRoute('/maintenance-r/new')({ component: NewMaintenancePage });
+export const Route = createFileRoute('/maintenance/new')({ component: NewMaintenancePage });
 
 function NewMaintenancePage() {
   return (

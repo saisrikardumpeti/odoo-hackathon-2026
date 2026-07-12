@@ -11,7 +11,7 @@ import {
 import { Textarea } from '#/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
 
-export const Route = createFileRoute('/maintenance-r/approvals')({ component: ApprovalsPage });
+export const Route = createFileRoute('/maintenance/approvals')({ component: ApprovalsPage });
 
 function ApprovalsPage() {
   const { data, isLoading } = useMaintenanceList({ status: 'Pending' });

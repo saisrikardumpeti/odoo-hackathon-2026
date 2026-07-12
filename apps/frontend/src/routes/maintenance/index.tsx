@@ -4,7 +4,7 @@ import { MaintenanceKanban } from '#/components/maintenance/MaintenanceKanban';
 import { Button } from '#/components/ui/button';
 import { Plus } from 'lucide-react';
 
-export const Route = createFileRoute('/maintenance-r/')({ component: MaintenancePage });
+export const Route = createFileRoute('/maintenance/')({ component: MaintenancePage });
 
 function MaintenancePage() {
   const isManager = useAuthStore((s) => {
