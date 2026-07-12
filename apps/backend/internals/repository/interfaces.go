@@ -18,6 +18,7 @@ import (
 	employee_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/employee-repo"
 	maintenance_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/maintenance-repo"
 	notification_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/notification-repo"
+	report_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/report-repo"
 	transfer_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/transfer-repo"
 )
 
@@ -35,6 +36,7 @@ func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 		Booking:      booking_repo.NewBookingRepository(pool),
 		Maintenance:  maintenance_repo.NewMaintenanceRepository(pool),
 		Audit:        audit_repo.NewAuditRepository(pool),
+		Report:       report_repo.NewReportRepository(pool),
 		Dashboard:    dashboard_repo.NewDashboardRepository(pool),
 	}
 }
@@ -52,6 +54,7 @@ type StorageRegistry struct {
 	Booking      BookingStorage
 	Maintenance  MaintenanceStorage
 	Audit        AuditStorage
+	Report       ReportStorage
 	Dashboard    DashboardStorage
 }
 
@@ -164,6 +167,14 @@ type AuditStorage interface {
 	CloseCycle(ctx context.Context, cycleID, closedBy string) error
 	ListDiscrepancyReports(ctx context.Context, cycleID *string, resolved *bool) ([]models.DiscrepancyReportDetail, error)
 	ResolveDiscrepancy(ctx context.Context, id, resolvedBy string) error
+}
+
+type ReportStorage interface {
+	GetUtilization(ctx context.Context, from, to *time.Time, idleDays int) ([]models.UtilizationReportItem, error)
+	GetMaintenanceFrequency(ctx context.Context, from, to *time.Time) ([]models.MaintenanceFrequencyItem, []models.MaintenanceCategoryItem, error)
+	GetRetirementWatchlist(ctx context.Context, ageYearsThreshold float64) ([]models.RetirementWatchlistItem, error)
+	GetAllocationSummary(ctx context.Context) ([]models.AllocationSummaryItem, error)
+	GetBookingHeatmap(ctx context.Context, from, to *time.Time) ([]models.BookingHeatmapItem, error)
 }
 
 type DashboardStorage interface {

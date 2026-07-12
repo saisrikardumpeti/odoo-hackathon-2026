@@ -19,6 +19,7 @@ import (
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/employee"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/maintenance"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/notification"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/report"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/middleware"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/scheduler"
@@ -67,6 +68,7 @@ func main() {
 	auditHandler := audit.NewAuditHandler(stores)
 	notificationHandler := notification.NewNotificationHandler(stores)
 	dashboardHandler := dashboard.NewDashboardHandler(stores)
+	reportHandler := report.NewReportHandler(stores)
 	activityLogHandler := activitylog.NewActivityLogHandler(stores)
 
 	schedCtx, schedCancel := context.WithCancel(context.Background())
@@ -203,6 +205,18 @@ func main() {
 			discrepancyResolveGroup.Use(middleware.RequireRole("Admin", "AssetManager"))
 			{
 				discrepancyResolveGroup.PATCH("/discrepancy-reports/:id/resolve", auditHandler.ResolveDiscrepancyHandler)
+			}
+
+			// Reports — accessible to Admin, AssetManager, and DepartmentHead
+			reportGroup := v1.Group("/reports")
+			reportGroup.Use(middleware.RequireRole("Admin", "AssetManager", "DepartmentHead"))
+			{
+				reportGroup.GET("/utilization", reportHandler.GetUtilizationHandler)
+				reportGroup.GET("/maintenance-frequency", reportHandler.GetMaintenanceFrequencyHandler)
+				reportGroup.GET("/retirement-watchlist", reportHandler.GetRetirementWatchlistHandler)
+				reportGroup.GET("/allocation-summary", reportHandler.GetAllocationSummaryHandler)
+				reportGroup.GET("/booking-heatmap", reportHandler.GetBookingHeatmapHandler)
+				reportGroup.GET("/export", reportHandler.ExportHandler)
 			}
 		}
 	}
