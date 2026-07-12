@@ -2,6 +2,7 @@ package middleware
 
 import (
  "net/http"
+ "slices"
  "strings"
 
  "github.com/gin-gonic/gin"
@@ -35,5 +36,28 @@ func AuthRequired() gin.HandlerFunc {
   c.Set("email", claims.Email)
   c.Set("role", claims.Role)
   c.Next()
+ }
+}
+
+func RequireRole(allowedRoles ...string) gin.HandlerFunc {
+ return func(c *gin.Context) {
+  role, exists := c.Get("role")
+  if !exists {
+   c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+   c.Abort()
+   return
+  }
+  roleStr, ok := role.(string)
+  if !ok {
+   c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+   c.Abort()
+   return
+  }
+  if slices.Contains(allowedRoles, roleStr) {
+   c.Next()
+   return
+  }
+  c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+  c.Abort()
  }
 }
