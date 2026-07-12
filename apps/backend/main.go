@@ -8,6 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/department"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/employee"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/middleware"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/seed"
@@ -45,6 +48,9 @@ func main() {
 
 	stores := repository.NewStorageRegistry(dbPool)
 	authHandler := auth.NewAuthHandler(stores)
+	departmentHandler := department.NewDepartmentHandler(stores)
+	categoryHandler := category.NewCategoryHandler(stores)
+	employeeHandler := employee.NewEmployeeHandler(stores)
 
 	router := gin.Default()
 
@@ -59,6 +65,24 @@ func main() {
 		auth.Use(middleware.AuthRequired())
 		{
 			auth.GET("/me", authHandler.MeHandler)
+		}
+
+		v1 := api.Group("/v1")
+		v1.Use(middleware.AuthRequired())
+		v1.Use(middleware.RequireRole("Admin"))
+		{
+			v1.GET("/departments", departmentHandler.ListHandler)
+			v1.POST("/departments", departmentHandler.CreateHandler)
+			v1.PATCH("/departments/:id", departmentHandler.UpdateHandler)
+			v1.PATCH("/departments/:id/deactivate", departmentHandler.DeactivateHandler)
+
+			v1.GET("/categories", categoryHandler.ListHandler)
+			v1.POST("/categories", categoryHandler.CreateHandler)
+			v1.PATCH("/categories/:id", categoryHandler.UpdateHandler)
+
+			v1.GET("/employees", employeeHandler.ListHandler)
+			v1.PATCH("/employees/:id", employeeHandler.UpdateHandler)
+			v1.PATCH("/employees/:id/role", employeeHandler.UpdateRoleHandler)
 		}
 	}
 
