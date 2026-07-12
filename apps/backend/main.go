@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/activitylog"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/allocation"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/asset"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/audit"
@@ -16,6 +17,7 @@ import (
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/department"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/employee"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/maintenance"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/notification"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/middleware"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/scheduler"
@@ -62,6 +64,8 @@ func main() {
 	bookingHandler := booking.NewBookingHandler(stores)
 	maintenanceHandler := maintenance.NewMaintenanceHandler(stores)
 	auditHandler := audit.NewAuditHandler(stores)
+	notificationHandler := notification.NewNotificationHandler(stores)
+	activityLogHandler := activitylog.NewActivityLogHandler(stores)
 
 	schedCtx, schedCancel := context.WithCancel(context.Background())
 	defer schedCancel()
@@ -171,6 +175,19 @@ func main() {
 				admin.POST("/audit-cycles", auditHandler.CreateCycleHandler)
 				admin.POST("/audit-cycles/:id/auditors", auditHandler.AssignAuditorsHandler)
 				admin.PATCH("/audit-cycles/:id/close", auditHandler.CloseCycleHandler)
+			}
+
+			// Notifications — any authenticated employee
+			v1.GET("/notifications", notificationHandler.ListHandler)
+			v1.GET("/notifications/unread-count", notificationHandler.UnreadCountHandler)
+			v1.PATCH("/notifications/:id/read", notificationHandler.MarkReadHandler)
+			v1.PATCH("/notifications/read-all", notificationHandler.MarkReadAllHandler)
+
+			// Activity Logs — Admin, AssetManager, or DepartmentHead only
+			activityLogGroup := v1.Group("")
+			activityLogGroup.Use(middleware.RequireRole("Admin", "AssetManager", "DepartmentHead"))
+			{
+				activityLogGroup.GET("/activity-logs", activityLogHandler.ListHandler)
 			}
 
 			// Discrepancy resolution — Admin or AssetManager

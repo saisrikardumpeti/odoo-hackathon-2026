@@ -11,3 +11,8 @@ type ActivityLog struct {
 	Metadata        map[string]interface{} `json:"metadata"`
 	CreatedAt       time.Time              `json:"created_at"`
 }
+
+type ActivityLogDetail struct {
+	ActivityLog
+	ActorName *string `json:"actor_name"`
+}

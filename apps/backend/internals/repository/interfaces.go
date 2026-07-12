@@ -97,6 +97,7 @@ type AssetStorage interface {
 
 type ActivityLogStorage interface {
 	Create(ctx context.Context, entry models.ActivityLog) error
+	List(ctx context.Context, filters activity_log_repo.ActivityLogFilters) (*activity_log_repo.ActivityLogListResult, error)
 }
 
 type AllocationStorage interface {
@@ -119,8 +120,11 @@ type TransferStorage interface {
 
 type NotificationStorage interface {
 	Create(ctx context.Context, n models.Notification) error
-	ListByEmployee(ctx context.Context, employeeID string, unreadOnly bool) ([]models.Notification, error)
+	ListByEmployee(ctx context.Context, employeeID string, unreadOnly bool, page, pageSize int) (*notification_repo.NotificationListResult, error)
 	MarkRead(ctx context.Context, id string) error
+	MarkReadAll(ctx context.Context, employeeID string) error
+	UnreadCount(ctx context.Context, employeeID string) (int, error)
+	Exists(ctx context.Context, employeeID, notifType string, relatedEntityID string) (bool, error)
 }
 
 type BookingStorage interface {
