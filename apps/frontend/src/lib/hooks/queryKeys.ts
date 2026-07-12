@@ -19,4 +19,13 @@ export const queryKeys = {
     detail: (id: string) => ['assets', id] as const,
     history: (id: string) => ['assets', id, 'history'] as const,
   },
+  allocations: {
+    all: ['allocations'] as const,
+    my: ['allocations', 'my'] as const,
+    overdue: ['allocations', 'overdue'] as const,
+  },
+  transfers: {
+    all: ['transfers'] as const,
+    pending: ['transfers', 'pending'] as const,
+  },
 };
