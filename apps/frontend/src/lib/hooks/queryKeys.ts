@@ -41,4 +41,17 @@ export const queryKeys = {
     detail: (id: string) => ['maintenance', id] as const,
     byAsset: (assetId: string) => ['maintenance', 'asset', assetId] as const,
   },
+  audit: {
+    cycles: {
+      all: ['audit-cycles'] as const,
+      detail: (id: string) => ['audit-cycles', id] as const,
+    },
+    items: (cycleId: string, myItems?: boolean) =>
+      ['audit-items', cycleId, myItems] as const,
+    discrepancies: {
+      all: ['discrepancy-reports'] as const,
+      filtered: (params?: Record<string, string>) =>
+        ['discrepancy-reports', params] as const,
+    },
+  },
 };

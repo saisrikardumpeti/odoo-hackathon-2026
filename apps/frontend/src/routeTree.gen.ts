@@ -9,38 +9,285 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResourceBookingRouteImport } from './routes/resource-booking'
+import { Route as OrganizationSetupRouteImport } from './routes/organization-setup'
+import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MaintenanceIndexRouteImport } from './routes/maintenance/index'
+import { Route as AuditIndexRouteImport } from './routes/audit/index'
+import { Route as AssetsIndexRouteImport } from './routes/assets/index'
+import { Route as AllocationTransferIndexRouteImport } from './routes/allocation-transfer/index'
+import { Route as MaintenanceNewRouteImport } from './routes/maintenance/new'
+import { Route as MaintenanceApprovalsRouteImport } from './routes/maintenance/approvals'
+import { Route as AuthSignupRouteImport } from './routes/auth/signup'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AuditNewRouteImport } from './routes/audit/new'
+import { Route as AssetsNewRouteImport } from './routes/assets/new'
+import { Route as AssetsIdRouteImport } from './routes/assets/$id'
+import { Route as AllocationTransferOverdueRouteImport } from './routes/allocation-transfer/overdue'
+import { Route as AuditCycleIdRouteImport } from './routes/audit/cycle/$id'
 
+const ResourceBookingRoute = ResourceBookingRouteImport.update({
+  id: '/resource-booking',
+  path: '/resource-booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizationSetupRoute = OrganizationSetupRouteImport.update({
+  id: '/organization-setup',
+  path: '/organization-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyBookingsRoute = MyBookingsRouteImport.update({
+  id: '/my-bookings',
+  path: '/my-bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MaintenanceIndexRoute = MaintenanceIndexRouteImport.update({
+  id: '/maintenance/',
+  path: '/maintenance/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditIndexRoute = AuditIndexRouteImport.update({
+  id: '/audit/',
+  path: '/audit/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssetsIndexRoute = AssetsIndexRouteImport.update({
+  id: '/assets/',
+  path: '/assets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AllocationTransferIndexRoute = AllocationTransferIndexRouteImport.update({
+  id: '/allocation-transfer/',
+  path: '/allocation-transfer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaintenanceNewRoute = MaintenanceNewRouteImport.update({
+  id: '/maintenance/new',
+  path: '/maintenance/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaintenanceApprovalsRoute = MaintenanceApprovalsRouteImport.update({
+  id: '/maintenance/approvals',
+  path: '/maintenance/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditNewRoute = AuditNewRouteImport.update({
+  id: '/audit/new',
+  path: '/audit/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssetsNewRoute = AssetsNewRouteImport.update({
+  id: '/assets/new',
+  path: '/assets/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssetsIdRoute = AssetsIdRouteImport.update({
+  id: '/assets/$id',
+  path: '/assets/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AllocationTransferOverdueRoute =
+  AllocationTransferOverdueRouteImport.update({
+    id: '/allocation-transfer/overdue',
+    path: '/allocation-transfer/overdue',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuditCycleIdRoute = AuditCycleIdRouteImport.update({
+  id: '/audit/cycle/$id',
+  path: '/audit/cycle/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/my-bookings': typeof MyBookingsRoute
+  '/organization-setup': typeof OrganizationSetupRoute
+  '/resource-booking': typeof ResourceBookingRoute
+  '/allocation-transfer/overdue': typeof AllocationTransferOverdueRoute
+  '/assets/$id': typeof AssetsIdRoute
+  '/assets/new': typeof AssetsNewRoute
+  '/audit/new': typeof AuditNewRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/maintenance/approvals': typeof MaintenanceApprovalsRoute
+  '/maintenance/new': typeof MaintenanceNewRoute
+  '/allocation-transfer/': typeof AllocationTransferIndexRoute
+  '/assets/': typeof AssetsIndexRoute
+  '/audit/': typeof AuditIndexRoute
+  '/maintenance/': typeof MaintenanceIndexRoute
+  '/audit/cycle/$id': typeof AuditCycleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/my-bookings': typeof MyBookingsRoute
+  '/organization-setup': typeof OrganizationSetupRoute
+  '/resource-booking': typeof ResourceBookingRoute
+  '/allocation-transfer/overdue': typeof AllocationTransferOverdueRoute
+  '/assets/$id': typeof AssetsIdRoute
+  '/assets/new': typeof AssetsNewRoute
+  '/audit/new': typeof AuditNewRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/maintenance/approvals': typeof MaintenanceApprovalsRoute
+  '/maintenance/new': typeof MaintenanceNewRoute
+  '/allocation-transfer': typeof AllocationTransferIndexRoute
+  '/assets': typeof AssetsIndexRoute
+  '/audit': typeof AuditIndexRoute
+  '/maintenance': typeof MaintenanceIndexRoute
+  '/audit/cycle/$id': typeof AuditCycleIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/my-bookings': typeof MyBookingsRoute
+  '/organization-setup': typeof OrganizationSetupRoute
+  '/resource-booking': typeof ResourceBookingRoute
+  '/allocation-transfer/overdue': typeof AllocationTransferOverdueRoute
+  '/assets/$id': typeof AssetsIdRoute
+  '/assets/new': typeof AssetsNewRoute
+  '/audit/new': typeof AuditNewRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/maintenance/approvals': typeof MaintenanceApprovalsRoute
+  '/maintenance/new': typeof MaintenanceNewRoute
+  '/allocation-transfer/': typeof AllocationTransferIndexRoute
+  '/assets/': typeof AssetsIndexRoute
+  '/audit/': typeof AuditIndexRoute
+  '/maintenance/': typeof MaintenanceIndexRoute
+  '/audit/cycle/$id': typeof AuditCycleIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/my-bookings'
+    | '/organization-setup'
+    | '/resource-booking'
+    | '/allocation-transfer/overdue'
+    | '/assets/$id'
+    | '/assets/new'
+    | '/audit/new'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/maintenance/approvals'
+    | '/maintenance/new'
+    | '/allocation-transfer/'
+    | '/assets/'
+    | '/audit/'
+    | '/maintenance/'
+    | '/audit/cycle/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/my-bookings'
+    | '/organization-setup'
+    | '/resource-booking'
+    | '/allocation-transfer/overdue'
+    | '/assets/$id'
+    | '/assets/new'
+    | '/audit/new'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/maintenance/approvals'
+    | '/maintenance/new'
+    | '/allocation-transfer'
+    | '/assets'
+    | '/audit'
+    | '/maintenance'
+    | '/audit/cycle/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/my-bookings'
+    | '/organization-setup'
+    | '/resource-booking'
+    | '/allocation-transfer/overdue'
+    | '/assets/$id'
+    | '/assets/new'
+    | '/audit/new'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/maintenance/approvals'
+    | '/maintenance/new'
+    | '/allocation-transfer/'
+    | '/assets/'
+    | '/audit/'
+    | '/maintenance/'
+    | '/audit/cycle/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MyBookingsRoute: typeof MyBookingsRoute
+  OrganizationSetupRoute: typeof OrganizationSetupRoute
+  ResourceBookingRoute: typeof ResourceBookingRoute
+  AllocationTransferOverdueRoute: typeof AllocationTransferOverdueRoute
+  AssetsIdRoute: typeof AssetsIdRoute
+  AssetsNewRoute: typeof AssetsNewRoute
+  AuditNewRoute: typeof AuditNewRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+  MaintenanceApprovalsRoute: typeof MaintenanceApprovalsRoute
+  MaintenanceNewRoute: typeof MaintenanceNewRoute
+  AllocationTransferIndexRoute: typeof AllocationTransferIndexRoute
+  AssetsIndexRoute: typeof AssetsIndexRoute
+  AuditIndexRoute: typeof AuditIndexRoute
+  MaintenanceIndexRoute: typeof MaintenanceIndexRoute
+  AuditCycleIdRoute: typeof AuditCycleIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/resource-booking': {
+      id: '/resource-booking'
+      path: '/resource-booking'
+      fullPath: '/resource-booking'
+      preLoaderRoute: typeof ResourceBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organization-setup': {
+      id: '/organization-setup'
+      path: '/organization-setup'
+      fullPath: '/organization-setup'
+      preLoaderRoute: typeof OrganizationSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-bookings': {
+      id: '/my-bookings'
+      path: '/my-bookings'
+      fullPath: '/my-bookings'
+      preLoaderRoute: typeof MyBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +295,126 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/maintenance/': {
+      id: '/maintenance/'
+      path: '/maintenance'
+      fullPath: '/maintenance/'
+      preLoaderRoute: typeof MaintenanceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/': {
+      id: '/audit/'
+      path: '/audit'
+      fullPath: '/audit/'
+      preLoaderRoute: typeof AuditIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assets/': {
+      id: '/assets/'
+      path: '/assets'
+      fullPath: '/assets/'
+      preLoaderRoute: typeof AssetsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/allocation-transfer/': {
+      id: '/allocation-transfer/'
+      path: '/allocation-transfer'
+      fullPath: '/allocation-transfer/'
+      preLoaderRoute: typeof AllocationTransferIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maintenance/new': {
+      id: '/maintenance/new'
+      path: '/maintenance/new'
+      fullPath: '/maintenance/new'
+      preLoaderRoute: typeof MaintenanceNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maintenance/approvals': {
+      id: '/maintenance/approvals'
+      path: '/maintenance/approvals'
+      fullPath: '/maintenance/approvals'
+      preLoaderRoute: typeof MaintenanceApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/new': {
+      id: '/audit/new'
+      path: '/audit/new'
+      fullPath: '/audit/new'
+      preLoaderRoute: typeof AuditNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assets/new': {
+      id: '/assets/new'
+      path: '/assets/new'
+      fullPath: '/assets/new'
+      preLoaderRoute: typeof AssetsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assets/$id': {
+      id: '/assets/$id'
+      path: '/assets/$id'
+      fullPath: '/assets/$id'
+      preLoaderRoute: typeof AssetsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/allocation-transfer/overdue': {
+      id: '/allocation-transfer/overdue'
+      path: '/allocation-transfer/overdue'
+      fullPath: '/allocation-transfer/overdue'
+      preLoaderRoute: typeof AllocationTransferOverdueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/cycle/$id': {
+      id: '/audit/cycle/$id'
+      path: '/audit/cycle/$id'
+      fullPath: '/audit/cycle/$id'
+      preLoaderRoute: typeof AuditCycleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MyBookingsRoute: MyBookingsRoute,
+  OrganizationSetupRoute: OrganizationSetupRoute,
+  ResourceBookingRoute: ResourceBookingRoute,
+  AllocationTransferOverdueRoute: AllocationTransferOverdueRoute,
+  AssetsIdRoute: AssetsIdRoute,
+  AssetsNewRoute: AssetsNewRoute,
+  AuditNewRoute: AuditNewRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthSignupRoute: AuthSignupRoute,
+  MaintenanceApprovalsRoute: MaintenanceApprovalsRoute,
+  MaintenanceNewRoute: MaintenanceNewRoute,
+  AllocationTransferIndexRoute: AllocationTransferIndexRoute,
+  AssetsIndexRoute: AssetsIndexRoute,
+  AuditIndexRoute: AuditIndexRoute,
+  MaintenanceIndexRoute: MaintenanceIndexRoute,
+  AuditCycleIdRoute: AuditCycleIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
