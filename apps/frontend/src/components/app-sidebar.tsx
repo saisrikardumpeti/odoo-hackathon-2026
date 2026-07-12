@@ -13,6 +13,7 @@ import {
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useAuthStore } from '#/lib/stores/authStore'
 import { Button } from '@/components/ui/button'
+import { NotificationBell } from '#/components/notifications/NotificationBell'
 import {
   LayoutDashboard,
   Building2,
@@ -27,6 +28,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  ClipboardList,
 } from 'lucide-react'
 
 const navItems = [
@@ -39,6 +41,7 @@ const navItems = [
   { label: 'Maintenance', href: '/maintenance', icon: Wrench },
   { label: 'Audit', href: '/audit', icon: ClipboardCheck },
   { label: 'Reports', href: '/reports', icon: FileBarChart },
+  { label: 'Activity Logs', href: '/activity-logs', icon: ClipboardList },
   { label: 'Notifications', href: '/notifications', icon: Bell },
 ]
 
@@ -59,12 +62,15 @@ function AppSidebar() {
           <Link to="/" className="text-lg font-bold truncate">
             {state === 'collapsed' ? 'AF' : 'AssetFlow'}
           </Link>
-          <button
-            onClick={toggleSidebar}
-            className="rounded-md p-1 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            {state === 'collapsed' ? <PanelLeft className="size-4" /> : <PanelLeftClose className="size-4" />}
-          </button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <button
+              onClick={toggleSidebar}
+              className="rounded-md p-1 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              {state === 'collapsed' ? <PanelLeft className="size-4" /> : <PanelLeftClose className="size-4" />}
+            </button>
+          </div>
         </div>
       </SidebarHeader>
 

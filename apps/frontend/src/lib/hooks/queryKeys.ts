@@ -41,6 +41,15 @@ export const queryKeys = {
     detail: (id: string) => ['maintenance', id] as const,
     byAsset: (assetId: string) => ['maintenance', 'asset', assetId] as const,
   },
+  notifications: {
+    all: ['notifications'] as const,
+    list: (params?: Record<string, unknown>) => ['notifications', 'list', params] as const,
+    unreadCount: ['notifications', 'unread-count'] as const,
+  },
+  activityLogs: {
+    all: ['activity-logs'] as const,
+    list: (params?: Record<string, unknown>) => ['activity-logs', 'list', params] as const,
+  },
   audit: {
     cycles: {
       all: ['audit-cycles'] as const,
