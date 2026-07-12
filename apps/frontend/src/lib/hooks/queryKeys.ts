@@ -13,4 +13,10 @@ export const queryKeys = {
     all: ['employees'] as const,
     filtered: (params?: Record<string, string>) => ['employees', params] as const,
   },
+  assets: {
+    all: ['assets'] as const,
+    list: (params?: Record<string, unknown>) => ['assets', 'list', params] as const,
+    detail: (id: string) => ['assets', id] as const,
+    history: (id: string) => ['assets', id, 'history'] as const,
+  },
 };
