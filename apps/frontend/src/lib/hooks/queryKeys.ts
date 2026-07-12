@@ -35,4 +35,10 @@ export const queryKeys = {
       ['bookings', 'resource', assetId, from, to] as const,
     detail: (id: string) => ['bookings', id] as const,
   },
+  maintenance: {
+    all: ['maintenance'] as const,
+    list: (params?: Record<string, string>) => ['maintenance', 'list', params] as const,
+    detail: (id: string) => ['maintenance', id] as const,
+    byAsset: (assetId: string) => ['maintenance', 'asset', assetId] as const,
+  },
 };
