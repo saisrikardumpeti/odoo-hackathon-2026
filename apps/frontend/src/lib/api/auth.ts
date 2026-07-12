@@ -6,6 +6,7 @@ export interface Employee {
   email: string;
   role: 'Admin' | 'DepartmentHead' | 'AssetManager' | 'Employee';
   department_id: string | null;
+  status?: string;
 }
 
 export interface SignupResponse {
