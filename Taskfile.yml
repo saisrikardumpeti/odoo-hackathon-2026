@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  setup:backend:
+    desc: Install Go backend dependencies
+    dir: apps/backend
+    cmds:
+      - go mod tidy
+
+  setup:frontend:
+    desc: Install Frontend dependencies
+    dir: apps/frontend
+    cmds:
+      - pnpm install
+
+  seed:db:
+    desc: Seeds the database
+    dir: apps/backend/seed
+    cmds:
+      - go run seed.go
+
+  run:backend:dev:
+    desc: Run Go Application in dev environment
+    dir: apps/backend
+    cmds:
+      - air .
+
+  run:frontend:dev:
+    desc: Run frontend application in dev environment
+    dir: apps/frontend
+    cmds:
+      - pnpm dev
