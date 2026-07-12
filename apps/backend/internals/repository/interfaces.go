@@ -5,8 +5,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/models"
-	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
 	activity_log_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/activity-log-repo"
+	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
 	category_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/category-repo"
 	department_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/department-repo"
 	employee_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/employee-repo"
@@ -14,10 +14,10 @@ import (
 
 func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 	return &StorageRegistry{
-		Auth:       auth_repo.NewAuthRepository(pool),
-		Department: department_repo.NewDepartmentRepository(pool),
-		Category:   category_repo.NewCategoryRepository(pool),
-		Employee:   employee_repo.NewEmployeeRepository(pool),
+		Auth:        auth_repo.NewAuthRepository(pool),
+		Department:  department_repo.NewDepartmentRepository(pool),
+		Category:    category_repo.NewCategoryRepository(pool),
+		Employee:    employee_repo.NewEmployeeRepository(pool),
 		ActivityLog: activity_log_repo.NewActivityLogRepository(pool),
 	}
 }
