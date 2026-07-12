@@ -1,7 +1,6 @@
 import { usePing } from '#/lib/hooks/usePing'
-import { Link, createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useAuthStore } from '#/lib/stores/authStore'
-import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
