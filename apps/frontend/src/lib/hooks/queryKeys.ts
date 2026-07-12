@@ -50,6 +50,12 @@ export const queryKeys = {
     all: ['activity-logs'] as const,
     list: (params?: Record<string, unknown>) => ['activity-logs', 'list', params] as const,
   },
+  dashboard: {
+    kpis: ['dashboard', 'kpis'] as const,
+    overdue: ['dashboard', 'overdue'] as const,
+    upcoming: (windowDays?: number) => ['dashboard', 'upcoming', windowDays] as const,
+    activity: ['dashboard', 'activity'] as const,
+  },
   audit: {
     cycles: {
       all: ['audit-cycles'] as const,
