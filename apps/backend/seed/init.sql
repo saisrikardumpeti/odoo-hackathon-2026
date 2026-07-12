@@ -128,6 +128,7 @@ CREATE TABLE assets (
     current_holder_employee_id  UUID REFERENCES employees(id) ON DELETE SET NULL,
     current_holder_department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
     qr_code                     VARCHAR(255),
+    custom_fields               JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at                  TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at                  TIMESTAMPTZ NOT NULL DEFAULT now()
 );

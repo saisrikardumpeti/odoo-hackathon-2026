@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/asset"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/department"
@@ -51,6 +52,7 @@ func main() {
 	departmentHandler := department.NewDepartmentHandler(stores)
 	categoryHandler := category.NewCategoryHandler(stores)
 	employeeHandler := employee.NewEmployeeHandler(stores)
+	assetHandler := asset.NewAssetHandler(stores)
 
 	router := gin.Default()
 
@@ -69,20 +71,37 @@ func main() {
 
 		v1 := api.Group("/v1")
 		v1.Use(middleware.AuthRequired())
-		v1.Use(middleware.RequireRole("Admin"))
 		{
-			v1.GET("/departments", departmentHandler.ListHandler)
-			v1.POST("/departments", departmentHandler.CreateHandler)
-			v1.PATCH("/departments/:id", departmentHandler.UpdateHandler)
-			v1.PATCH("/departments/:id/deactivate", departmentHandler.DeactivateHandler)
-
+			// Read endpoints — open to all authenticated roles
+			v1.GET("/assets", assetHandler.ListHandler)
+			v1.GET("/assets/:id", assetHandler.GetHandler)
+			v1.GET("/assets/:id/history", assetHandler.GetHistoryHandler)
 			v1.GET("/categories", categoryHandler.ListHandler)
-			v1.POST("/categories", categoryHandler.CreateHandler)
-			v1.PATCH("/categories/:id", categoryHandler.UpdateHandler)
 
-			v1.GET("/employees", employeeHandler.ListHandler)
-			v1.PATCH("/employees/:id", employeeHandler.UpdateHandler)
-			v1.PATCH("/employees/:id/role", employeeHandler.UpdateRoleHandler)
+			// Write endpoints — Admin or AssetManager
+			writeGroup := v1.Group("")
+			writeGroup.Use(middleware.RequireRole("Admin", "AssetManager"))
+			{
+				writeGroup.POST("/assets", assetHandler.RegisterHandler)
+				writeGroup.POST("/assets/:id/documents", assetHandler.UploadDocumentHandler)
+			}
+
+			// Admin-only endpoints
+			admin := v1.Group("")
+			admin.Use(middleware.RequireRole("Admin"))
+			{
+				admin.GET("/departments", departmentHandler.ListHandler)
+				admin.POST("/departments", departmentHandler.CreateHandler)
+				admin.PATCH("/departments/:id", departmentHandler.UpdateHandler)
+				admin.PATCH("/departments/:id/deactivate", departmentHandler.DeactivateHandler)
+
+				admin.POST("/categories", categoryHandler.CreateHandler)
+				admin.PATCH("/categories/:id", categoryHandler.UpdateHandler)
+
+				admin.GET("/employees", employeeHandler.ListHandler)
+				admin.PATCH("/employees/:id", employeeHandler.UpdateHandler)
+				admin.PATCH("/employees/:id/role", employeeHandler.UpdateRoleHandler)
+			}
 		}
 	}
 

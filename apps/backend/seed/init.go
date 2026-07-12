@@ -26,7 +26,10 @@ func RunMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 
 	if exists {
-		log.Println("Database schema already initialized, skipping migration")
+		log.Println("Database schema already initialized, running pending migrations...")
+		if err := runPendingMigrations(ctx, pool); err != nil {
+			return fmt.Errorf("failed to run pending migrations: %w", err)
+		}
 		return nil
 	}
 
@@ -82,5 +85,18 @@ func seedDefaultAdmin(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 
 	log.Printf("Default admin created: %s / %s", defaultAdminEmail, defaultAdminPassword)
+	return nil
+}
+
+func runPendingMigrations(ctx context.Context, pool *pgxpool.Pool) error {
+	migrations := []string{
+		`ALTER TABLE assets ADD COLUMN IF NOT EXISTS custom_fields JSONB NOT NULL DEFAULT '{}'::jsonb`,
+	}
+	for _, m := range migrations {
+		if _, err := pool.Exec(ctx, m); err != nil {
+			return fmt.Errorf("migration failed: %w", err)
+		}
+	}
+	log.Println("Pending migrations applied successfully")
 	return nil
 }
