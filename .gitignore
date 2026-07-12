@@ -46,3 +46,4 @@ go.work.sum
 # .vscode/
 .pnpm-store
 tmp
+routeTree.gen.ts
