@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/models"
 	activity_log_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/activity-log-repo"
+	asset_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/asset-repo"
 	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
 	category_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/category-repo"
 	department_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/department-repo"
@@ -19,6 +20,7 @@ func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 		Category:    category_repo.NewCategoryRepository(pool),
 		Employee:    employee_repo.NewEmployeeRepository(pool),
 		ActivityLog: activity_log_repo.NewActivityLogRepository(pool),
+		Asset:       asset_repo.NewAssetRepository(pool),
 	}
 }
 
@@ -28,6 +30,7 @@ type StorageRegistry struct {
 	Category    AssetCategoryStorage
 	Employee    EmployeeStorage
 	ActivityLog ActivityLogStorage
+	Asset       AssetStorage
 }
 
 type AuthStorage interface {
@@ -62,6 +65,15 @@ type EmployeeStorage interface {
 	GetByID(ctx context.Context, id string) (*models.Employee, error)
 	Update(ctx context.Context, e models.Employee) (*models.Employee, error)
 	UpdateRole(ctx context.Context, id, role string) error
+}
+
+type AssetStorage interface {
+	Create(ctx context.Context, asset models.Asset) (*models.Asset, error)
+	CreateStatusHistory(ctx context.Context, h models.AssetStatusHistory) error
+	List(ctx context.Context, filters asset_repo.AssetListFilters) (*asset_repo.AssetListResult, error)
+	GetByID(ctx context.Context, id string) (*models.AssetDetail, error)
+	GetHistory(ctx context.Context, assetID string) ([]models.HistoryEvent, error)
+	CreateDocument(ctx context.Context, doc models.AssetDocument) (*models.AssetDocument, error)
 }
 
 type ActivityLogStorage interface {
