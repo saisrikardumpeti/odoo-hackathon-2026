@@ -72,6 +72,7 @@ type AssetListFilters struct {
 	Status          string
 	DepartmentID    string
 	Location        string
+	IsBookable      *bool
 	Page            int
 	PageSize        int
 }
@@ -114,6 +115,11 @@ func (r *AssetRepository) List(ctx context.Context, filters AssetListFilters) (*
 	if filters.Location != "" {
 		conditions = append(conditions, fmt.Sprintf("a.location ILIKE $%d", argIdx))
 		args = append(args, "%"+filters.Location+"%")
+		argIdx++
+	}
+	if filters.IsBookable != nil {
+		conditions = append(conditions, fmt.Sprintf("a.is_bookable = $%d", argIdx))
+		args = append(args, *filters.IsBookable)
 		argIdx++
 	}
 

@@ -10,6 +10,7 @@ import (
 	allocation_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/allocation-repo"
 	asset_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/asset-repo"
 	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
+	booking_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/booking-repo"
 	category_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/category-repo"
 	department_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/department-repo"
 	employee_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/employee-repo"
@@ -28,6 +29,7 @@ func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 		Allocation:   allocation_repo.NewAllocationRepository(pool),
 		Transfer:     transfer_repo.NewTransferRepository(pool),
 		Notification: notification_repo.NewNotificationRepository(pool),
+		Booking:      booking_repo.NewBookingRepository(pool),
 	}
 }
 
@@ -41,6 +43,7 @@ type StorageRegistry struct {
 	Allocation   AllocationStorage
 	Transfer     TransferStorage
 	Notification NotificationStorage
+	Booking      BookingStorage
 }
 
 type AuthStorage interface {
@@ -112,4 +115,16 @@ type NotificationStorage interface {
 	Create(ctx context.Context, n models.Notification) error
 	ListByEmployee(ctx context.Context, employeeID string, unreadOnly bool) ([]models.Notification, error)
 	MarkRead(ctx context.Context, id string) error
+}
+
+type BookingStorage interface {
+	ListByResource(ctx context.Context, assetID string, from, to *time.Time) ([]models.BookingDetail, error)
+	Create(ctx context.Context, b models.Booking) (*models.Booking, error)
+	GetByID(ctx context.Context, id string) (*models.BookingDetail, error)
+	Cancel(ctx context.Context, id string) error
+	Reschedule(ctx context.Context, id string, startTime, endTime time.Time) error
+	ListByBooker(ctx context.Context, employeeID string) ([]models.BookingDetail, error)
+	FindConflicting(ctx context.Context, assetID string, startTime, endTime time.Time, excludeID *string) ([]models.BookingDetail, error)
+	TransitionStatuses(ctx context.Context) error
+	CreateReminders(ctx context.Context, beforeMinutes int) error
 }

@@ -30,6 +30,9 @@ func RunMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 		if err := runPendingMigrations(ctx, pool); err != nil {
 			return fmt.Errorf("failed to run pending migrations: %w", err)
 		}
+		if err := SeedTestData(ctx, pool); err != nil {
+			return fmt.Errorf("failed to seed test data: %w", err)
+		}
 		return nil
 	}
 
@@ -41,6 +44,10 @@ func RunMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 
 	if err := seedDefaultAdmin(ctx, pool); err != nil {
 		return fmt.Errorf("failed to seed default admin: %w", err)
+	}
+
+	if err := SeedTestData(ctx, pool); err != nil {
+		return fmt.Errorf("failed to seed test data: %w", err)
 	}
 
 	return nil

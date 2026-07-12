@@ -94,6 +94,7 @@ type ListAssetsQuery struct {
 	Status       string `form:"status"`
 	DepartmentID string `form:"department"`
 	Location     string `form:"location"`
+	IsBookable   string `form:"is_bookable"`
 	Page         string `form:"page"`
 	PageSize     string `form:"page_size"`
 }
@@ -108,6 +109,16 @@ func (h *AssetHandler) ListHandler(c *gin.Context) {
 	page, _ := strconv.Atoi(q.Page)
 	pageSize, _ := strconv.Atoi(q.PageSize)
 
+	var isBookable *bool
+	if q.IsBookable != "" {
+		b, err := strconv.ParseBool(q.IsBookable)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid is_bookable query param"})
+			return
+		}
+		isBookable = &b
+	}
+
 	filters := asset_repo.AssetListFilters{
 		AssetTag:     q.AssetTag,
 		SerialNumber: q.SerialNumber,
@@ -115,6 +126,7 @@ func (h *AssetHandler) ListHandler(c *gin.Context) {
 		Status:       q.Status,
 		DepartmentID: q.DepartmentID,
 		Location:     q.Location,
+		IsBookable:   isBookable,
 		Page:         page,
 		PageSize:     pageSize,
 	}

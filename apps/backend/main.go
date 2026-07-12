@@ -10,11 +10,13 @@ import (
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/allocation"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/asset"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/booking"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/department"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/employee"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/middleware"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/scheduler"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/seed"
 )
 
@@ -55,6 +57,11 @@ func main() {
 	employeeHandler := employee.NewEmployeeHandler(stores)
 	assetHandler := asset.NewAssetHandler(stores)
 	allocationHandler := allocation.NewAllocationHandler(stores, dbPool)
+	bookingHandler := booking.NewBookingHandler(stores)
+
+	schedCtx, schedCancel := context.WithCancel(context.Background())
+	defer schedCancel()
+	go scheduler.Start(schedCtx, stores)
 
 	router := gin.Default()
 
@@ -79,6 +86,13 @@ func main() {
 			v1.GET("/assets/:id", assetHandler.GetHandler)
 			v1.GET("/assets/:id/history", assetHandler.GetHistoryHandler)
 			v1.GET("/categories", categoryHandler.ListHandler)
+
+			// Resource Booking — any authenticated employee
+			v1.GET("/resources/:assetId/bookings", bookingHandler.ListByResourceHandler)
+			v1.POST("/bookings", bookingHandler.CreateHandler)
+			v1.GET("/bookings/my", bookingHandler.ListMyBookingsHandler)
+			v1.PATCH("/bookings/:id/cancel", bookingHandler.CancelHandler)
+			v1.PATCH("/bookings/:id/reschedule", bookingHandler.RescheduleHandler)
 
 			// Allocation & Transfer — read open to all, allocate/return needs Admin/AssetManager/DepartmentHead
 			v1.GET("/allocations/my", allocationHandler.ListMyAllocationsHandler)
