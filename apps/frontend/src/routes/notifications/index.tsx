@@ -6,7 +6,7 @@ import { CheckCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '#/components/ui/button';
 import { cn } from '#/lib/utils';
 
-export const Route = createFileRoute('/notifications-r/')({
+export const Route = createFileRoute('/notifications/')({
   beforeLoad: () => {
     if (!useAuthStore.getState().isAuthenticated) {
       throw redirect({ to: '/auth/login' });
