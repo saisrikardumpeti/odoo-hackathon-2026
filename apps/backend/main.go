@@ -7,7 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/example"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/middleware"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/seed"
 )
 
 func initDatabase() (*pgxpool.Pool, error) {
@@ -36,12 +39,27 @@ func main() {
 	}
 	defer dbPool.Close()
 
+	if err := seed.RunMigrations(context.Background(), dbPool); err != nil {
+		log.Fatalf("Could not initialize database schema: %v", err)
+	}
+
+	stores := repository.NewStorageRegistry(dbPool)
+	authHandler := auth.NewAuthHandler(stores)
+
 	router := gin.Default()
 
 	api := router.Group("/api")
-
 	{
-		api.GET("/example", example.ExampleHandler)
+		api.POST("/auth/signup", authHandler.SignupHandler)
+		api.POST("/auth/login", authHandler.LoginHandler)
+		api.POST("/auth/refresh", authHandler.RefreshTokenHandler)
+		api.POST("/auth/forgot-password", authHandler.ForgotPasswordHandler)
+
+		auth := api.Group("/auth")
+		auth.Use(middleware.AuthRequired())
+		{
+			auth.GET("/me", authHandler.MeHandler)
+		}
 	}
 
 	log.Println("Starting server on :8000...")

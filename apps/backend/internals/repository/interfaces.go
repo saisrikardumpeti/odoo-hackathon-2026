@@ -2,22 +2,29 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/models"
-	example_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/example-repo"
+	auth_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/auth-repo"
 )
 
-func NewStorageRegistry(db *sql.DB) *StorageRegistry {
+func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 	return &StorageRegistry{
-		Example: example_repo.NewExampleRepository(db),
+		Auth: auth_repo.NewAuthRepository(pool),
 	}
 }
 
 type StorageRegistry struct {
-	Example ExampleStorage
+	Auth AuthStorage
 }
 
-type ExampleStorage interface {
-	CreateExample(ctx context.Context, example models.Example) error
+type AuthStorage interface {
+	CreateEmployeeAndUser(ctx context.Context, name, email, passwordHash string) (*models.Employee, error)
+	GetEmployeeByEmail(ctx context.Context, email string) (*models.Employee, error)
+	GetEmployeeByID(ctx context.Context, id string) (*models.Employee, error)
+	GetUserByEmployeeID(ctx context.Context, employeeID string) (*models.User, error)
+	UpdateLastLogin(ctx context.Context, userID string) error
+	StoreRefreshToken(ctx context.Context, userID, refreshTokenHash string) error
+	GetUserByRefreshToken(ctx context.Context, refreshTokenHash string) (*models.User, error)
+	UpdatePassword(ctx context.Context, userID, passwordHash string) error
 }
