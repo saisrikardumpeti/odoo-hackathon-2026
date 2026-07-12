@@ -14,6 +14,7 @@ import (
 	category_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/category-repo"
 	department_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/department-repo"
 	employee_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/employee-repo"
+	maintenance_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/maintenance-repo"
 	notification_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/notification-repo"
 	transfer_repo "github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository/transfer-repo"
 )
@@ -30,6 +31,7 @@ func NewStorageRegistry(pool *pgxpool.Pool) *StorageRegistry {
 		Transfer:     transfer_repo.NewTransferRepository(pool),
 		Notification: notification_repo.NewNotificationRepository(pool),
 		Booking:      booking_repo.NewBookingRepository(pool),
+		Maintenance:  maintenance_repo.NewMaintenanceRepository(pool),
 	}
 }
 
@@ -44,6 +46,7 @@ type StorageRegistry struct {
 	Transfer     TransferStorage
 	Notification NotificationStorage
 	Booking      BookingStorage
+	Maintenance  MaintenanceStorage
 }
 
 type AuthStorage interface {
@@ -127,4 +130,14 @@ type BookingStorage interface {
 	FindConflicting(ctx context.Context, assetID string, startTime, endTime time.Time, excludeID *string) ([]models.BookingDetail, error)
 	TransitionStatuses(ctx context.Context) error
 	CreateReminders(ctx context.Context, beforeMinutes int) error
+}
+
+type MaintenanceStorage interface {
+	Create(ctx context.Context, m models.MaintenanceRequest) (*models.MaintenanceRequest, error)
+	GetByID(ctx context.Context, id string) (*models.MaintenanceDetail, error)
+	List(ctx context.Context, filters maintenance_repo.MaintenanceListFilters) (*maintenance_repo.MaintenanceListResult, error)
+	UpdateStatus(ctx context.Context, id, status string, fields map[string]interface{}) error
+	UpdateAssetStatus(ctx context.Context, assetID, toStatus string, changedByID *string, reason string) error
+	GetCurrentAssetStatus(ctx context.Context, assetID string) (string, error)
+	ListByAsset(ctx context.Context, assetID string) ([]models.MaintenanceDetail, error)
 }

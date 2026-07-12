@@ -14,6 +14,7 @@ import (
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/department"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/employee"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/maintenance"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/middleware"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/repository"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/scheduler"
@@ -58,6 +59,7 @@ func main() {
 	assetHandler := asset.NewAssetHandler(stores)
 	allocationHandler := allocation.NewAllocationHandler(stores, dbPool)
 	bookingHandler := booking.NewBookingHandler(stores)
+	maintenanceHandler := maintenance.NewMaintenanceHandler(stores)
 
 	schedCtx, schedCancel := context.WithCancel(context.Background())
 	defer schedCancel()
@@ -93,6 +95,21 @@ func main() {
 			v1.GET("/bookings/my", bookingHandler.ListMyBookingsHandler)
 			v1.PATCH("/bookings/:id/cancel", bookingHandler.CancelHandler)
 			v1.PATCH("/bookings/:id/reschedule", bookingHandler.RescheduleHandler)
+
+			// Maintenance — any authenticated employee can create and list
+			v1.POST("/maintenance", maintenanceHandler.CreateHandler)
+			v1.GET("/maintenance", maintenanceHandler.ListHandler)
+
+			// Maintenance approvals — Admin or AssetManager only
+			maintenanceApproveGroup := v1.Group("")
+			maintenanceApproveGroup.Use(middleware.RequireRole("Admin", "AssetManager"))
+			{
+				maintenanceApproveGroup.PATCH("/maintenance/:id/approve", maintenanceHandler.ApproveHandler)
+				maintenanceApproveGroup.PATCH("/maintenance/:id/reject", maintenanceHandler.RejectHandler)
+				maintenanceApproveGroup.PATCH("/maintenance/:id/assign-technician", maintenanceHandler.AssignTechnicianHandler)
+				maintenanceApproveGroup.PATCH("/maintenance/:id/start", maintenanceHandler.StartHandler)
+				maintenanceApproveGroup.PATCH("/maintenance/:id/resolve", maintenanceHandler.ResolveHandler)
+			}
 
 			// Allocation & Transfer — read open to all, allocate/return needs Admin/AssetManager/DepartmentHead
 			v1.GET("/allocations/my", allocationHandler.ListMyAllocationsHandler)
