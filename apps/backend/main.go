@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/allocation"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/asset"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/auth"
 	"github.com/saisrikardumpeti/odoo-hackathon-2026/internals/handlers/category"
@@ -53,6 +54,7 @@ func main() {
 	categoryHandler := category.NewCategoryHandler(stores)
 	employeeHandler := employee.NewEmployeeHandler(stores)
 	assetHandler := asset.NewAssetHandler(stores)
+	allocationHandler := allocation.NewAllocationHandler(stores, dbPool)
 
 	router := gin.Default()
 
@@ -77,6 +79,29 @@ func main() {
 			v1.GET("/assets/:id", assetHandler.GetHandler)
 			v1.GET("/assets/:id/history", assetHandler.GetHistoryHandler)
 			v1.GET("/categories", categoryHandler.ListHandler)
+
+			// Allocation & Transfer — read open to all, allocate/return needs Admin/AssetManager/DepartmentHead
+			v1.GET("/allocations/my", allocationHandler.ListMyAllocationsHandler)
+			v1.GET("/allocations/overdue", allocationHandler.ListOverdueHandler)
+			v1.GET("/transfers/pending", allocationHandler.ListPendingTransfersHandler)
+
+			allocateGroup := v1.Group("")
+			allocateGroup.Use(middleware.RequireRole("Admin", "AssetManager", "DepartmentHead"))
+			{
+				allocateGroup.POST("/allocations", allocationHandler.CreateHandler)
+				allocateGroup.POST("/allocations/:id/return", allocationHandler.ReturnHandler)
+			}
+
+			// Transfer request — any authenticated employee can initiate
+			v1.POST("/transfers", allocationHandler.CreateTransferHandler)
+
+			// Transfer approval — only AssetManager or DepartmentHead
+			transferApproveGroup := v1.Group("")
+			transferApproveGroup.Use(middleware.RequireRole("AssetManager", "DepartmentHead"))
+			{
+				transferApproveGroup.PATCH("/transfers/:id/approve", allocationHandler.ApproveTransferHandler)
+				transferApproveGroup.PATCH("/transfers/:id/reject", allocationHandler.RejectTransferHandler)
+			}
 
 			// Write endpoints — Admin or AssetManager
 			writeGroup := v1.Group("")
